@@ -170,3 +170,6 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 .aider*
+
+# DotLore context directory
+.lore/
