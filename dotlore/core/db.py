@@ -2,6 +2,7 @@ import os
 import json
 import lancedb
 import numpy as np
+import pyarrow as pa
 from pathlib import Path
 from typing import Dict, List, Optional, Union, Any
 
@@ -28,28 +29,28 @@ class DotLoreDB:
         """Ensure that all required tables exist."""
         # Main context table for vector search
         if "context" not in self.db.table_names():
-            schema = {
-                "text": "string",
-                "embedding": "float32[1536]",  # Default to OpenAI dimensions
-                "source_id": "string",
-                "source_type": "string",
-                "source_path": "string",
-                "chunk_id": "int32",
-                "last_updated": "string",
-                "raw_chunk": "string"
-            }
+            schema = pa.schema([
+                ('text', pa.string()),
+                ('embedding', pa.list_(pa.float32(), 1536)),  # Default to OpenAI dimensions
+                ('source_id', pa.string()),
+                ('source_type', pa.string()),
+                ('source_path', pa.string()),
+                ('chunk_id', pa.int32()),
+                ('last_updated', pa.string()),
+                ('raw_chunk', pa.string())
+            ])
             self.db.create_table("context", schema=schema)
         
         # Metadata table for tracking sources
         if "sources" not in self.db.table_names():
-            schema = {
-                "source_id": "string",
-                "source_type": "string",
-                "source_path": "string",
-                "last_updated": "string",
-                "content_hash": "string",
-                "metadata": "string"  # JSON string for additional metadata
-            }
+            schema = pa.schema([
+                ('source_id', pa.string()),
+                ('source_type', pa.string()),
+                ('source_path', pa.string()),
+                ('last_updated', pa.string()),
+                ('content_hash', pa.string()),
+                ('metadata', pa.string())  # JSON string for additional metadata
+            ])
             self.db.create_table("sources", schema=schema)
     
     def add_chunks(self, chunks: List[Dict[str, Any]]):
