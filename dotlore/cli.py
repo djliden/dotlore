@@ -1,4 +1,6 @@
 import click
+import yaml
+from dotlore.core import config as config_module
 
 @click.group(context_settings=dict(help_option_names=['-h', '--help']))
 def cli():
@@ -9,6 +11,10 @@ def cli():
 def init():
     """Initialize DotLore in the current directory."""
     click.echo("Initializing DotLore...")
+    
+    # Create default config file
+    config_path = config_module.create_default_config()
+    click.echo(f"Created default configuration at {config_path}")
 
 @cli.command()
 @click.argument('sources', nargs=-1)
@@ -54,14 +60,34 @@ def query(query):
 @cli.command()
 @click.argument('key', required=False)
 @click.argument('value', required=False)
-def config(key, value):
+@click.option('--set', is_flag=True, help='Set a configuration value')
+def config(key, value, set):
     """View or set configuration."""
-    if key and value:
-        click.echo(f"Setting config {key} to {value}")
+    config_path = config_module.get_config_path()
+    
+    if not config_path.exists():
+        click.echo("No configuration found. Run 'dotlore init' first.")
+        return
+    
+    if set and key and value:
+        config_module.set_config_value(key, value)
+        click.echo(f"Set config {key} to {value}")
     elif key:
-        click.echo(f"Getting config value for {key}")
+        config_value = config_module.get_config_value(key)
+        if config_value is not None:
+            if isinstance(config_value, (dict, list)):
+                click.echo(yaml.dump({key: config_value}, default_flow_style=False))
+            else:
+                click.echo(f"{key}: {config_value}")
+        else:
+            click.echo(f"No configuration found for {key}")
     else:
-        click.echo("Showing all configuration")
+        # Show all configuration
+        cfg = config_module.get_config_value()
+        if cfg:
+            click.echo(yaml.dump(cfg, default_flow_style=False))
+        else:
+            click.echo("No configuration found")
 
 @cli.command()
 @click.argument('filename')
