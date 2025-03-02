@@ -1,0 +1,13 @@
+[project]
+name = "dotlore"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "click>=8.1.8",
+    "lancedb>=0.20.0",
+    "pyyaml>=6.0.2",
+]
+[project.scripts]
+dotlore = "dotlore.cli:cli"
