@@ -12,7 +12,7 @@ uv tool install dotlore
 pip install dotlore
 ```
 
-## Usage
+## Intended Usage (Not yet implemented)
 
 ```bash
 # Initialize DotLore in your project
@@ -40,5 +40,3 @@ dotlore config set embedding.model text-embedding-3-small
 dotlore export context.json
 dotlore import context.json
 ```
-
-See the [design document](designdoc.md) for more details.
