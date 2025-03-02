@@ -1,6 +1,6 @@
 import click
 
-@click.group()
+@click.group(context_settings=dict(help_option_names=['-h', '--help']))
 def cli():
     """DotLore: Context management for code and research projects."""
     pass
