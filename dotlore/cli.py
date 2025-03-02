@@ -69,7 +69,7 @@ def export(filename):
     """Export context to file."""
     click.echo(f"Exporting context to {filename}")
 
-@cli.command()
+@cli.command(name='import')
 @click.argument('filename')
 def import_(filename):
     """Import context from file."""
